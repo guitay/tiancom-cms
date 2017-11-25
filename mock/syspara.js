@@ -5,9 +5,9 @@ let tableListDataSource = [];
 for (let i = 0; i < 46; i += 1) {
   tableListDataSource.push({
     key: i,
-    dmmc: `一个任务名称 ${i}`,
-    dmms: '这是一段描述',
-    dmz: Math.floor(Math.random() * 1000),
+    csmc: `一个任务名称 ${i}`,
+    csms: '这是一段描述',
+    csz: Math.floor(Math.random() * 1000),
    
   });
 }

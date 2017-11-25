@@ -92,4 +92,8 @@ const proxy = {
   'GET /api/notices': getNotices,
 };
 
-export default noProxy ? {} : delay(proxy, 1000);
+//export default noProxy ? {} : delay(proxy, 1000);
+export default {
+  'GET /*': 'http://192.168.0.98:8083',
+  'POST /*': 'http://192.168.0.98:8083'
+};

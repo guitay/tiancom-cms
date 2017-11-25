@@ -27,6 +27,7 @@ class EditModal extends Component {
     const { onOk } = this.props;
     this.props.form.validateFields((err, values) => {
       if (!err) {
+    	console.log("--------->"+values);
         onOk(values);
         this.hideModelHandler();
       }
@@ -36,6 +37,7 @@ class EditModal extends Component {
   render() {
     const { children } = this.props;
     const { getFieldDecorator } = this.props.form;
+    console.log('this.props.record-->'+this.props.record);
     const { csmc, csz, csms } = this.props.record;
     const formItemLayout = {
       labelCol: { span: 6 },
@@ -53,7 +55,7 @@ class EditModal extends Component {
           onOk={this.okHandler}
           onCancel={this.hideModelHandler}
         >
-          <Form horizontal onSubmit={this.okHandler}>
+          <Form layout="horizontal" onSubmit={this.okHandler}>
 	          <FormItem label="参数名称" 
 	  	      	labelCol={{ span: 5 }}
 	  	      	wrapperCol={{ span: 15 }}>
@@ -85,10 +87,7 @@ class EditModal extends Component {
 	  	      </FormItem>
           </Form>
         </Modal>
-        <pre className="language-bash">
-	        {JSON.stringify(fields, null, 2)}
-	      </pre>
-	       
+        
       </span>
     );
   }

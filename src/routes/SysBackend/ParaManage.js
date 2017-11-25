@@ -5,7 +5,7 @@ import CMSStandardTable from '../../components/CMSStandardTable';
 import EditModal from '../../components/CmsBackend/SysPara/EditModal';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
-import styles from './Paramanage.less';
+import styles from './ParaManage.less';
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -16,10 +16,8 @@ const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
 		)
 @Form.create()
 
-export default class Paramanage extends PureComponent {
+export default class ParaManage extends PureComponent {
   state = {
-    addInputValue: {},
-    modalVisible: false,
     selectedRows: [],
     formValues: {},
     fields: {
@@ -103,6 +101,8 @@ export default class Paramanage extends PureComponent {
 
   handleSearch = (e) => {
     e.preventDefault();
+    
+    console.log('handleSearch action.....');
 
     const { dispatch, form } = this.props;
 
@@ -110,8 +110,7 @@ export default class Paramanage extends PureComponent {
       if (err) return;
 
       const values = {
-        ...fieldsValue,
-        updatedAt: fieldsValue.updatedAt && fieldsValue.updatedAt.valueOf(),
+        ...fieldsValue
       };
 
       this.setState({
@@ -124,83 +123,54 @@ export default class Paramanage extends PureComponent {
       });
     });
   }
-
-  handleModalVisible = (flag) => {
-    this.setState({
-      modalVisible: !!flag,
-    });
-  }
-
-  handleAddInput = (e) => {
-	// this.state.addInputValue = {e.target.name:e.target.value};
-	// var obj = {e.target.value:e.target.value};
-	// var obj = new Object();
-	// obj[e.target.name]=e.target.value;
-	// var copy = Object.assign(this.state.addInputValue,obj);
-	// console.log(copy);
-	
- //    this.setState({
- //      addInputValue: copy ,
- //    });
-  }
-  
-  handleLoad = (key) => {
-	console.log(this.state);
-	console.log("load KEY = "+ key);  
-	const newData = [...this.state.data];
-	console.log("load newData = "+ newData);  
-	
-    const target = newData.filter(item => key === item.key)[0];
-    console.log("handleLoad--->"+target);
-    this.setState({modalVisible: true,formValues: target });
-
-  }
-  
-  handleFormChange = (changedFields) => {
-      this.setState({
-        fields: { ...this.state.fields, ...changedFields },
-      });
-    }
-
-  handleDelete= (key) => {
-	  
-	const newData = [...this.state.data];
-    const target = newData.filter(item => key === item.csmc)[0];
-    console.log("handleLoad--->"+target);
-    this.setState({modalVisible: true,formValues: target });
-    
-  }
   
   
-  handleAdd = (e) => {
-    e.preventDefault();
+  handleFormReset = () => {
+	    const { form, dispatch } = this.props;
+	    form.resetFields();
+//	    dispatch({
+//	      type: 'syspara/fetch',
+//	      payload: {},
+//	    });
+	  }
 
-    const { dispatch, form } = this.props;
-
-    form.validateFields((err, fieldsValue) => {
-      if (err) return;
-
-      const values = {
-        ...fieldsValue,
-      };
-
-      console.log('editFormValues-->'+values);
-      
-      this.setState({
-        formValues: values,
-      });
-
-    this.props.dispatch({
+  createHandler = (values)=> {
+	  const { dispatch, form } = this.props;
+	    
+    dispatch({
       type: 'syspara/add',
-      payload: {
-        description: this.state.formValues,
-      },
+      payload: values,
     });
 
-    message.success('添加成功');
-    this.setState({
-      modalVisible: false,
+    dispatch({
+      type: 'syspara/fetch',
+      payload: values,
     });
+  }
+
+  editHandler = (values)=> {
+    console.log('editHandler action.....values='+values);
+    const { dispatch, form } = this.props;
+    
+    dispatch({
+      type: 'syspara/add',
+      payload: values,
+    });
+
+    dispatch({
+      type: 'syspara/fetch',
+      payload: values,
+    });
+    
+    message.success('添加成功');
+  }
+  
+  deleteHandler = (id) => {
+    const { dispatch, form } = this.props;
+    console.log('deleteHandler action.....');
+    dispatch({
+      type: 'syspara/remove',
+      payload: id,
     });
   }
 
@@ -211,22 +181,22 @@ export default class Paramanage extends PureComponent {
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={8} sm={24}>
             <FormItem label="参数名称">
-              {getFieldDecorator('csmc_c')(
+              {getFieldDecorator('csmc')(
                 <Input placeholder="请输入" />
               )}
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
             <FormItem label="参数描述">
-              {getFieldDecorator('csms_c')(
+              {getFieldDecorator('csms')(
                 <Input placeholder="请输入" />
               )}
             </FormItem>
           </Col>
-         
           <Col md={8} sm={24}>
             <span className={styles.submitButtons}>
               <Button type="primary" htmlType="submit">查询</Button>
+              <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>重置</Button>
             </span>
           </Col>
         </Row>
@@ -239,47 +209,37 @@ export default class Paramanage extends PureComponent {
 	const fields = this.state.fields;
 	const columns = [
 	      {
-	        title: '代码名称',
-	        dataIndex: 'dmmc',
+	        title: '参数名称',
+	        dataIndex: 'csmc',
 	        sorter:true
 	      },
 	      {
-	        title: '代码描述',
-	        dataIndex: 'dmms',
-	      },
+		        title: '参数值',
+		        dataIndex: 'csz',
+		        sorter: false
+		      },	
 	      {
-	        title: '代码值',
-	        dataIndex: 'dmz',
-	        sorter: false
+	        title: '参数描述',
+	        dataIndex: 'csms',
 	      },
 		  {
 	        title: '操作',
-	        render: (text,record) => (
-	          <div>
-	            <a onClick={() => this.handleLoad(record.dmmc)}>编辑</a>
-	            <Divider type="vertical" />
-	            <a onClick={() => this.handleDelete(record.dmmc)}>删除</a>
-	            
-	            <Popconfirm title="确定删除?" onConfirm={() => this.onDelete(record.dmmc)}>
-	              <a href="#">删除</a>
-	            </Popconfirm>
-	            
-	          </div>
-	        ),
+	        render:(text, record) => (
+	                <span className={styles.operation}>
+	                  <EditModal record={record} onOk={() => this.editHandler(record)}>
+	                    <a>编辑</a>
+	                  </EditModal>
+	                  <Divider type="vertical" />
+	                  <Popconfirm title="确认删除?" onConfirm={() => this.deleteHandler(record.csmc)}>
+	                    <a href="#">删除</a>
+	                  </Popconfirm>
+	                </span>
+	              ),
 	      },
 	    ];
 
 	const { syspara: { loading: sysparaLoading, data } } = this.props;    
-    const { selectedRows, modalVisible, addInputValue } = this.state;
-
-    const menu = (
-      <Menu onClick={this.handleMenuClick} selectedKeys={[]}>
-        <Menu.Item key="remove">删除</Menu.Item>
-        <Menu.Item key="approval">批量审批</Menu.Item>
-      </Menu>
-    );
-    
-   
+    const { selectedRows } = this.state;
 
     return (
       <PageHeaderLayout title="">
@@ -289,18 +249,17 @@ export default class Paramanage extends PureComponent {
               {this.renderSearchForm()}
             </div>
             <div className={styles.tableListOperator}>
-              <Button icon="plus" type="primary" onClick={() => this.handleModalVisible(true)}>
+            <EditModal record={{}} onOk={() => this.createHandler()}>
+              <Button icon="plus" type="primary">
                 新建
               </Button>
+            </EditModal>
               {
                 selectedRows.length > 0 && (
                   <span>
-                    <Button>批量操作</Button>
-                    <Dropdown overlay={menu}>
-                      <Button>
-                        更多操作 <Icon type="down" />
-                      </Button>
-                    </Dropdown>
+                    <Button>
+	                    批量删除 
+	                </Button>
                   </span>
                 )
               }
@@ -316,7 +275,6 @@ export default class Paramanage extends PureComponent {
             />
           </div>
         </Card>
-        <EditModal/>
       </PageHeaderLayout>
     );
   }

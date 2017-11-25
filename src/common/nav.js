@@ -18,17 +18,17 @@ export const getNavData = app => [
       {
         name: '系统管理',
         icon: 'dashboard',
-        path: 'sysboard',
+        path: 'sysmanage',
         children: [
           {
             name: '系统参数管理',
-            path: 'paramanage',
-            component: dynamicWrapper(app, ['syspara'], () => import('../routes/SysBoard/Paramanage')),
+            path: 'param',
+            component: dynamicWrapper(app, ['syspara'], () => import('../routes/SysBackend/ParaManage')),
           },
           {
             name: '积分管理',
-            path: 'jifenmanage',
-            component: '',
+            path: 'jifen',
+            component: dynamicWrapper(app, ['syspara'], () => import('../routes/SysBackend/ParaManage')),
           },
           {
             name: '评分星级管理',
@@ -54,7 +54,7 @@ export const getNavData = app => [
       },
       {
         name: '文档管理',
-        icon: 'dashboard',
+        icon: 'form',
         path: 'docsboard',
         children: [
           {
@@ -71,7 +71,7 @@ export const getNavData = app => [
       },
       {
         name: '问答管理',
-        icon: 'dashboard',
+        icon: 'table',
         path: 'qaboard',
         children: [
           {
@@ -88,7 +88,7 @@ export const getNavData = app => [
       },
       {
         name: '考核制度管理',
-        icon: 'dashboard',
+        icon: 'profile',
         path: 'khzdboard',
         children: [
           {
@@ -110,7 +110,7 @@ export const getNavData = app => [
       },
       {
         name: '案例库管理',
-        icon: 'dashboard',
+        icon: 'check-circle-o',
         path: 'alkboard',
         children: [
           {
